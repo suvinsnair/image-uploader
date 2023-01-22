@@ -1,0 +1,140 @@
+{% extends "header.html" %}
+{% block content %}
+{% load static %}
+<html lang="en">
+
+<style>
+      .image .img:hover{
+               opacity:0.6;
+               transition: 0.5s ease-in-out;
+               cursor:pointer;
+               
+
+       }
+       a{
+               text-decoration:none;
+       }
+</style>
+
+</head>
+<body>
+        <header class="d-flex flex-column flex-md-row align-items-center p-3 px-md-4 ">
+                <p class="h5 my-0 me-md-auto fw-normal"><a href="/"><img src="{% static 'image/logo.png' %}" width="30px;"></a> Image Uploader</p>
+                <nav class="my-2 my-md-0 me-md-3">
+                       <a> <img src="{{user.profile.image.url}}" style="width: 30px; border-radius:50%;" alt=""></a>
+                        <a class="p-2" href="/logout/">Logout</a>
+                  
+                </nav>
+              </header>
+
+
+        <div class="container-fluid shadow text-center bg-light py-5">
+{% if messages%}
+
+{% for message in messages %}
+        {% if message.tags == 'success' %}
+                <div class="font alert alert-success">{{message}}</div>
+        {% else %}
+                <div class="font alert alert-danger">{{message}}</div>
+        {% endif %}
+{%endfor%}
+{%endif%}
+                <div class="container">
+                <h1 class="font2 color"><b>Submit a Photo</b></h1> <br>
+                <form id="target-form" method="POST" enctype="multipart/form-data">
+                        {% csrf_token %}
+                <div class="mb-3">
+                        <input type="text" name="img_name" placeholder="Image Name" class="form-control form-control-lg font" required> <br>
+                        <input type="text" name="img_desc" placeholder="Image Description" class="form-control form-control-lg font"> <br>
+                        <input class="form-control form-control-lg font" name="img" type="file" id="formFile" required multiple>
+                      </div>
+                      <input type="hidden" name="u_profile" value="{{user.profile.image.url}}">
+                      <button name="upload" class="font btn text-white btn-lg bg-color"> Submit Photo</button>
+                </form>
+</div>
+        </div>
+
+
+        <div class="container mt-5">
+                <div class="row">
+                       {% for image in images%}
+<div class="col-sm-3 image">
+      <a title="{{image.image_name}}" data-bs-toggle="modal" data-bs-target="#image-id{{image.id}}" data-bs-whatever="@mdo">  
+              <img src="{{image.image.url}}" class="img-fluid img shadow-lg" alt="...">
+        </a>
+        
+        <div>
+        <a href="/profile/{{image.user}}/"><img src="{{image.user.username}}" style="width: 40px;position:relative;bottom: 50px;left:10px;border-radius:50%;" alt=""></a>
+              
+              <span class="font text-white" style="position:relative;bottom: 50px;left:20px;">{{image.user}}</span>
+
+              <a href="{{image.image.url}}" download class="btn btn-light font btn-sm" style="position: relative;left:200px;bottom:50px;"><i class="fa fa-arrow-down" aria-hidden="true"></i></a>
+        </div>  
+
+
+              
+        <!-- ================== Full screen Image ===================== -->
+
+        <div class="modal fade" id="image-id{{image.id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-xl">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title" id="exampleModalLabel">
+                        <img src="{{image.user.username}}" style="width: 40px;border-radius:50%;" alt="">   
+                        <small class="font ">{{image.image_name}}</small>
+                        <a href="{{image.image.url}}" download class="btn btn-sm text-center btn-outline-info font ">Download <i class="fa fa-arrow-down" aria-hidden="true"></i></a>
+                        <input type='submit' value='Delete' class="btn btn-sm text-center btn-outline-danger font "  onClick="deleteImage('{{image.id}}');" />
+                      </h5>
+                      
+                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                            
+                        <img src="{{image.image.url}}" class="img-fluid shadow-lg" alt="...">
+                        <br/>
+                        <br/>
+                        <h5>
+                                Description
+                        </h5>
+                        {% if image.description %}
+                                <p>
+                                        {{image.description}}
+                                </p>
+                        {% else %}
+                                <p>
+                                        No Description Found
+                                </p>
+                        {% endif %}
+                    </div>
+                    
+                  </div>
+                </div>
+              </div>
+
+              <!-- ====================== END =========================   -->
+
+</div>                      
+                       {%endfor%}
+                       
+                </div>
+
+        </div>
+
+        
+
+  
+
+</body>
+{% endblock %}
+
+{% block scriptcontent %}
+<script>
+function deleteImage(image_id) {
+        var input = $("<input>")
+               .attr("type", "hidden")
+               .attr("name", "image_id").val(image_id);
+        $("#target-form").append(input);
+        $("#target-form").submit();
+	}
+</script>
+{% endblock %}

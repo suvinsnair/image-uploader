@@ -1,0 +1,38 @@
+{% extends "header.html" %}
+{% block content %}
+<body>
+        <header class="d-flex flex-column flex-md-row align-items-center p-3 px-md-4 ">
+                <p class="h5 my-0 me-md-auto fw-normal"><a href="/" class="text-white">Image Uploader</a></p>
+                <nav class="my-2 my-md-0 me-md-3">
+                        <a class="p-2" href="/signup/">Signup</a>
+                        <a class="p-2" href="/login/">Login</a>
+                      </nav>
+              </header>
+      <div class="text-center container py-5 shadow">
+        {% for message in messages %}
+    
+        <div class="alert alert-success">
+            <a class="close" href="#" data-dismiss="alert">×</a>
+               {{ message }}
+        </div>
+    
+    {% endfor %}
+
+              <h1 class="font color">Login Form</h1> <br>
+              <form action="" method="post" novalidate>
+                      {% csrf_token %}
+                      
+                <span class="text-danger font"><b>{{form.non_field_errors}}</b></span>
+              {% for fm in form%}
+<span class="font">{{fm.label}}</span> {{fm}}  <br> <br>
+              {%endfor%}
+
+              <button class="btn font bg-color text-white">Login</button> <br> <br>
+              <small class="font2">Need an account <a href="/signup/">Signup</a></small>
+              </form>
+
+<br>
+
+      </div>  
+</body>
+{% endblock %}
